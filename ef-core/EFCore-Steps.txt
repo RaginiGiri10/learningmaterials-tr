@@ -1,0 +1,30 @@
+1. Create  the model classes.
+
+
+1 a. Install the following packages (version 5.0.17 as we are using .net core 3.1 framework).
+
+Microsoft.EntityFrameworkCore
+Microsoft.EntityFrameworkCore.SqlServer
+Microsoft.EntityFrameworkCore.Tools
+
+2. Create a class  which inherits from DbContext. (DbContext is comimg from Microsoft.EntityFrameworkCore namespace)
+
+3. Create a constructor with parameters (DbContextOptions<yourdbccontextclass> options):base(options)
+    
+
+4.  Define the DbSets
+
+5. Define the connection string in appsettings.json.
+
+  server=(localdb)\\<yourservername>;database=<yourdbname>;Trusted_Connection=true
+
+6. Register the Dbcontext in configureservices method.
+
+7. Open Package manager console from the tools menu ->Nuget Package Manager ->Package Manager Console. (run the following scripts)
+    Add-Migration <MigartionName>    
+    Update-Database
+
+8. Create a new Repository class. In the constructor pass a class which inherits from DBcontext (refer step 2)
+
+9. Add the necessary logic.
+

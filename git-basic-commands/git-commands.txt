@@ -1,0 +1,13 @@
+1. git clone <giturl>
+
+2. Go to the cloned folder and add a file.
+
+3. Open the cloned folder in command prompt
+
+4. to check local git repo status ->  git status
+
+5. In order to track any changes in git ->  git add .  (it will mark all the newly added/modified files for committing)
+
+6. commit the changes -> git commit -m "your message"
+
+7. to pusg the changes in the remote repository ->  git push

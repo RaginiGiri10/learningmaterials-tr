@@ -1,0 +1,88 @@
+EF Core Authentication & AUthorization Steps
+_________________________________________________
+
+1)Install packages
+   
+Microsoft.AspNetCore.Identity (2.2.0)
+Microsoft.AspNetCore.Identity.EntityFrameworkCore (3.1.22)
+Microsoft.AspNetCore.Authentication.JwtBearer (3.1.22)
+
+
+2)Your DBContext class must inherit from IdentityDbContext<IdentityUser>
+
+3)Register the identity services in startup.cs.
+
+ services.AddIdentity<IdentityUser, IdentityRole>()
+                    .AddEntityFrameworkStores<EmployeeDBContext>()
+                    .AddDefaultTokenProviders();
+
+4) Go to package manager console and perform  
+  
+ add-migration <yourmigrationname>
+
+5)update-database.
+
+
+6)Add the JWT key values in the appsettings.json
+
+ "JWT": {
+    "ValidAudience": "http://localhost:4000",
+    "ValidIssuer": "http://localhost:4000",
+    "Secret": "confidential#hjjh##Jhjhkh###"
+  }
+
+
+7) Register the Authentication Service in startup with the JWT Bearer validation.
+
+ services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience=true,
+                    ValidAudience = Configuration["JWT:ValidAudience"],
+                    ValidIssuer = Configuration["JWT:ValidIssuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
+                
+                };
+            });
+
+8. If the login is successfull create the token 
+
+
+List<Claim> userClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name,<username>)
+                   
+                };
+
+
+                var signInKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+
+                var jwtSecurityToken = new JwtSecurityToken(
+                    issuer:_configuration["JWT:ValidIssuer"],
+                    audience:_configuration["JWT:ValidAudience"],
+                    expires:DateTime.Now.AddHours(1),
+                    claims: userClaims,
+                    signingCredentials:new SigningCredentials(signInKey,SecurityAlgorithms.HmacSha256)
+                    );
+
+                return Ok(new
+                {
+                    token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+                    expiration = jwtSecurityToken.ValidTo
+                });
+
+9. Add  app.UseAuthentication(); before app.UseRouting() in the Configure() method in startup.cs class.
+
+
+
+
+
